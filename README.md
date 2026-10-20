@@ -1,13 +1,13 @@
-# WHAZZZ UPPPP!!!!!!!!!! ahahhahahahhah ndajfjaddvjnasd
+#Mini-Project CTE-412
 
 ## Team Members
-- Member A: [Student Number]
-- Member B: [Student Number]
-- Member C: [Student Number]
-- Member D: [Student Number]
+- Pema Namgyel
+- Dorji Tashi
+- Ngawang Tobgay
+- Ugyen Choda
 
 ## Project Overview
-This is a collaborative website for the ACM Club at CST, built as part of CTE412 Lab 09.
+This is a collaborative website for student leave management system 
 
 ## Shared Elements
 - All pages will share the same navigation area
