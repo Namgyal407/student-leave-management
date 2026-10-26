@@ -23,3 +23,21 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def get_session():
+    """Return the SQLAlchemy session bound to the current Flask request."""
+    from flask import g
+    if "db" not in g:
+        g.db = SessionLocal()
+    return g.db
+
+
+def close_session(exc=None):
+    """Flask teardown hook: roll back on error and always close the session."""
+    from flask import g
+    session = g.pop("db", None)
+    if session is not None:
+        if exc is not None:
+            session.rollback()
+        session.close()

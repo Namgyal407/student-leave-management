@@ -1,6 +1,6 @@
 import jwt
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 from flask import request, jsonify
 from dotenv import load_dotenv
@@ -14,11 +14,12 @@ TOKEN_EXPIRY_HOURS = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
 
 def generate_token(user_id: int, role: str) -> str:
     """Generate a JWT token for a user."""
+    now = datetime.now(timezone.utc)
     payload = {
         "user_id": user_id,
         "role": role,
-        "exp": datetime.utcnow() + timedelta(hours=TOKEN_EXPIRY_HOURS),
-        "iat": datetime.utcnow(),
+        "exp": now + timedelta(hours=TOKEN_EXPIRY_HOURS),
+        "iat": now,
     }
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
