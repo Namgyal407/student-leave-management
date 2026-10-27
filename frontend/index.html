@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101e3c" />
+  <meta name="description" content="Sign in to the Student Leave Management System to manage campus leave requests." />
+  <title>Sign In | Student Leave Management</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/auth.js" defer></script>
+</head>
+<body>
+  <main class="page-shell">
+    <section class="brand-panel" aria-label="Student Leave Management portal introduction">
+      <div class="brand-glow brand-glow-one" aria-hidden="true"></div>
+      <div class="brand-glow brand-glow-two" aria-hidden="true"></div>
+
+      <div class="brand-content">
+        <div class="brand-identity">
+          <span class="brand-symbol" aria-hidden="true">
+            <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 17.5 24 8l19 9.5L24 27 5 17.5Z" />
+              <path d="M12 21.5V30c7 6 17 6 24 0v-8.5" />
+              <path d="M43 18v12" /><circle cx="43" cy="33" r="2" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
+          <span class="brand-name">CST <span class="brand-divider">/</span> <span>Student Leave</span></span>
+        </div>
+
+        <div class="brand-main">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> CAMPUS SERVICES PORTAL</div>
+          <h1>More learning.<br /><span>Less paperwork.</span></h1>
+          <p class="brand-description">Your leave applications, approvals, and updates in one organised place. Simple for students. Clear for everyone.</p>
+
+          <div class="journey" aria-label="Three-step leave request process">
+            <div class="journey-item">
+              <span class="journey-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+              </span>
+              <span><strong>Apply online</strong><small>Submit a leave request in minutes</small></span>
+            </div>
+            <div class="journey-item">
+              <span class="journey-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>
+              </span>
+              <span><strong>Stay informed</strong><small>Know the status of your application</small></span>
+            </div>
+            <div class="journey-item">
+              <span class="journey-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+              </span>
+              <span><strong>Save time</strong><small>Manage requests from anywhere</small></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="brand-footer">
+          <span class="footer-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span>College of Science and Technology</span>
+        </div>
+      </div>
+      <div class="brand-pattern" aria-hidden="true"></div>
+    </section>
+
+    <section class="auth-panel" aria-label="Account sign in">
+      <div class="auth-inner">
+        <div class="mobile-identity" aria-hidden="true">
+          <span class="mobile-identity-symbol">CST</span>
+          <span>Student Leave Management</span>
+        </div>
+
+        <div id="loginView">
+          <div class="form-heading">
+            <div class="heading-accent" aria-hidden="true"></div>
+            <p class="form-kicker">WELCOME BACK</p>
+            <h2>Sign in to your account</h2>
+            <p class="form-description">Enter your college account details to continue.</p>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <div id="formMessage" class="form-message" role="alert" aria-live="polite" hidden></div>
+
+            <div class="field">
+              <label for="email">Email address</label>
+              <div class="input-wrap">
+                <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></svg>
+                <input id="email" name="email" type="email" placeholder="name@cst.edu.bt" autocomplete="username" inputmode="email" spellcheck="false" maxlength="254" required aria-describedby="emailError" />
+              </div>
+              <small id="emailError" class="field-error" hidden></small>
+            </div>
+
+            <div class="field">
+              <div class="field-label-row"><label for="password">Password</label></div>
+              <div class="input-wrap password-wrap">
+                <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg>
+                <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required aria-describedby="passwordError" />
+                <button class="password-toggle" id="togglePassword" type="button" aria-label="Show password" aria-pressed="false">
+                  <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg id="eyeClosed" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="m3 3 18 18M10.6 5.1A11.6 11.6 0 0 1 12 5c6.4 0 10 7 10 7a16 16 0 0 1-3.3 4.1M6.2 6.2C3.5 8.2 2 12 2 12s3.6 7 10 7a10.3 10.3 0 0 0 4.3-.9"/><path d="M10 10a3 3 0 0 0 4 4"/></svg>
+                </button>
+              </div>
+              <small id="passwordError" class="field-error" hidden></small>
+            </div>
+
+            <div class="form-options">
+              <label class="remember-label"><input type="checkbox" id="rememberMe" name="rememberMe" /><span>Keep me signed in</span></label>
+              <span class="account-help">Need help? Contact your admin</span>
+            </div>
+
+            <button class="submit-button" type="submit" id="submitButton">
+              <span id="buttonText">Sign in</span>
+              <span class="button-spinner" id="buttonSpinner" aria-hidden="true" hidden></span>
+              <svg id="buttonArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </button>
+          </form>
+
+          <div class="form-divider"><span>YOUR CAMPUS ACCOUNT</span></div>
+          <div class="support-card">
+            <div class="support-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg>
+            </div>
+            <p><strong>One account, different roles.</strong><span>Students, faculty and administrators can sign in securely.</span></p>
+          </div>
+        </div>
+
+        <div id="successView" class="success-view" hidden>
+          <div class="success-icon" aria-hidden="true">
+            <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m10 21 7 7 14-16"/></svg>
+          </div>
+          <p class="form-kicker">SIGNED IN SUCCESSFULLY</p>
+          <h2 id="welcomeText" tabindex="-1">Welcome back!</h2>
+          <p class="form-description">Your account has been authenticated with the leave management system.</p>
+          <div class="account-summary">
+            <span id="accountAvatar" class="account-avatar" aria-hidden="true"></span>
+            <div class="account-details"><strong id="accountName"></strong><span id="accountEmail"></span><span id="accountRole" class="role-tag"></span></div>
+          </div>
+          <p class="success-note">Your login is working. Your role-specific dashboard can be connected here when it is ready.</p>
+          <button type="button" class="submit-button" id="signOutButton">Sign out <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M13 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg></button>
+        </div>
+
+        <div class="auth-footer"><span>Student Leave Management System</span><span class="footer-bullet" aria-hidden="true"></span><span>College of Science and Technology</span></div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
