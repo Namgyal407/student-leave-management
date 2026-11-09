@@ -1,0 +1,39 @@
+STUDENT LEAVE MANAGEMENT SYSTEM - QUICK START (WINDOWS)
+=======================================================
+
+1. Extract Student_Leave_Management_Complete.zip.
+2. Start Docker Desktop.
+3. Open the extracted student-leave-management folder.
+4. Double-click START_DEMO_WINDOWS.bat
+   OR open PowerShell in this folder and run:
+
+       docker compose up --build -d
+       docker compose ps
+
+5. Open: http://localhost:5000
+
+Accounts (all use password123):
+   Student: student@cst.edu.bt
+   Faculty: faculty@cst.edu.bt
+   Admin:   admin@cst.edu.bt
+
+Confirm the database is online:
+   http://localhost:5000/api/health
+   Expected: {"status":"ok"}
+
+Optional verification (with Python installed):
+   python scripts/smoke_check.py
+
+To stop safely:
+   docker compose down
+
+For a tutor demonstration, see DEMO_CHECKLIST.md.
+For troubleshooting, see docs/setup.md.
+
+IMPORTANT:
+- This archive deliberately contains no .git or virtual environment.
+  To push code, copy these project files into your existing Git clone,
+  preferably on a new feature branch.
+- First Docker build requires internet access to download images/packages.
+- Avoid docker compose down -v (destroys demo data).
+- This is a LOCAL ACADEMIC DEMO, not a production public deployment.

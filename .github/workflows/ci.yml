@@ -1,0 +1,51 @@
+name: Flask API and frontend CI
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: leave_management
+          POSTGRES_USER: leave_app
+          POSTGRES_PASSWORD: leave_app_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U leave_app -d leave_management"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg2://leave_app:leave_app_password@localhost:5432/leave_management
+      SECRET_KEY: github-actions-test-secret-not-for-production
+      FLASK_DEBUG: 0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Python requirements
+        run: pip install -r requirements.txt
+      - name: Create database schema and demo accounts
+        run: |
+          PGPASSWORD=leave_app_password psql -h localhost -U leave_app -d leave_management -v ON_ERROR_STOP=1 -f database/schema.sql
+          python database/seed.py
+      - name: Run backend tests
+        run: pytest -q tests
+      - name: Check Python syntax
+        run: python -m compileall -q backend database
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check frontend JavaScript syntax
+        run: |
+          node --check frontend/js/auth.js
+          node --check frontend/js/dashboard.js

@@ -1,11 +1,11 @@
 """Leave type routes (read: any user, write: admin)."""
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
 from auth.jwt_handler import role_required, token_required
 from db import get_session
 from models import LeaveType
-from .utils import error, json_body
+from .utils import current_user, error, json_body
 
 bp = Blueprint("leave_types", __name__, url_prefix="/api/leave-types")
 
@@ -38,7 +38,14 @@ def _apply(lt, data, creating):
 @token_required
 def list_types():
     db = get_session()
-    types = db.query(LeaveType).filter(LeaveType.is_active.is_(True)).order_by(LeaveType.id).all()
+    types = db.query(LeaveType)
+    # Admins can manage inactive types; other users see active types only.
+    user = current_user()
+    if user is None:
+        return error("User not found or deactivated", 401)
+    if not (user.role == "admin" and request.args.get("include_inactive") == "true"):
+        types = types.filter(LeaveType.is_active.is_(True))
+    types = types.order_by(LeaveType.id).all()
     return jsonify({"leave_types": [t.to_dict() for t in types]}), 200
 
 

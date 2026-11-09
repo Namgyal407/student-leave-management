@@ -25,3 +25,5 @@ node_modules/
 
 # Logs
 *.log
+# User uploads (not source code)
+uploads/
