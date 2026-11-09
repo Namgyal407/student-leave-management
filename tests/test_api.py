@@ -116,3 +116,69 @@ def test_admin_creates_user(client, admin):
     assert client.post("/api/users", json=body, headers=admin).status_code == 409
     r = client.post("/api/login", json={"email": email, "password": "password123"})
     assert r.status_code == 200
+
+
+def test_served_frontend(client):
+    """The demonstration runs on one Flask origin, with no separate frontend server."""
+    assert client.get("/").status_code == 200
+    assert b"Student Leave" in client.get("/").data
+    assert client.get("/dashboard").status_code == 200
+    assert b"id=\"appShell\"" in client.get("/dashboard").data
+    assert client.get("/static/js/dashboard.js").status_code == 200
+
+
+def test_faculty_without_department_sees_no_leaves(client, admin):
+    """Regression: no department must not grant unrestricted leave visibility."""
+    email = f"faculty{uuid.uuid4().hex[:10]}@cst.edu.bt"
+    r = client.post("/api/users", json={"name": "Unassigned Faculty", "email": email,
+                                      "password": "password123", "role": "faculty"}, headers=admin)
+    assert r.status_code == 201, r.get_json()
+    faculty = login_from_response(client, email)
+    r = client.get("/api/leaves", headers=faculty)
+    assert r.status_code == 200
+    assert r.get_json()["leaves"] == []
+
+
+def login_from_response(client, email):
+    response = client.post("/api/login", json={"email": email, "password": "password123"})
+    assert response.status_code == 200, response.get_json()
+    return {"Authorization": "Bearer " + response.get_json()["token"]}
+
+
+def test_deactivated_tokens_are_invalid(client, admin):
+    email = f"inactive{uuid.uuid4().hex[:10]}@cst.edu.bt"
+    r = client.post("/api/users", json={"name": "Inactive Test Student", "email": email,
+                                      "password": "password123", "role": "student",
+                                      "year": "2nd Year"}, headers=admin)
+    assert r.status_code == 201
+    user_id = r.get_json()["user"]["id"]
+    headers = login_from_response(client, email)
+    assert client.get("/api/me", headers=headers).status_code == 200
+    assert client.put(f"/api/users/{user_id}", json={"is_active": False}, headers=admin).status_code == 200
+    assert client.get("/api/me", headers=headers).status_code == 401
+
+
+def test_document_upload_access_control(client, student, faculty_it, faculty_cs, admin):
+    from io import BytesIO
+    import os
+
+    file_body = {"file": (BytesIO(b"%PDF-1.4\n%test\n"), "evidence.pdf")}
+    r = client.post("/api/attachments", data=file_body, content_type="multipart/form-data", headers=student)
+    assert r.status_code == 201, r.get_json()
+    path = r.get_json()["document_url"]
+    assert client.get(path, headers=student).status_code == 200
+    assert client.get(path, headers=admin).status_code == 404  # not linked yet
+
+    future = date.today() + timedelta(days=600 + uuid.uuid4().int % 100)
+    payload = {"leave_type_id": 1, "reason": "Medical attendance letter",
+               "start_date": str(future), "end_date": str(future + timedelta(days=1)),
+               "document_url": path}
+    r = client.post("/api/leaves", json=payload, headers=student)
+    assert r.status_code == 201, r.get_json()
+    leave_id = r.get_json()["leave"]["id"]
+    assert client.get(path, headers=faculty_it).status_code == 200
+    assert client.get(path, headers=faculty_cs).status_code == 404
+    assert client.get(path, headers=admin).status_code == 200
+    # No anonymous download.
+    assert client.get(path).status_code == 401
+    assert client.post(f"/api/leaves/{leave_id}/cancel", headers=student).status_code == 200

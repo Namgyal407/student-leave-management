@@ -51,6 +51,12 @@ def token_required(f):
         if "error" in payload:
             return jsonify({"error": payload["error"]}), 401
 
+        # JWT signature alone is not sufficient after an account is deactivated.
+        from db import get_session
+        from models import User
+        user = get_session().get(User, payload.get("user_id"))
+        if user is None or not user.is_active or user.role != payload.get("role"):
+            return jsonify({"error": "Account unavailable or session invalid"}), 401
         request.user = payload
         return f(*args, **kwargs)
     return decorated

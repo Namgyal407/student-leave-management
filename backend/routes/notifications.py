@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify, request
 from auth.jwt_handler import token_required
 from db import get_session
 from models import Notification
-from .utils import error
+from .utils import error, current_user
 
 bp = Blueprint("notifications", __name__, url_prefix="/api/notifications")
 
@@ -13,6 +13,8 @@ bp = Blueprint("notifications", __name__, url_prefix="/api/notifications")
 @token_required
 def list_notifications():
     db = get_session()
+    if current_user() is None:
+        return error("User not found or deactivated", 401)
     uid = request.user["user_id"]
     q = db.query(Notification).filter(Notification.user_id == uid)
     unread_count = q.filter(Notification.is_read.is_(False)).count()
@@ -28,6 +30,8 @@ def list_notifications():
 @token_required
 def read_all():
     db = get_session()
+    if current_user() is None:
+        return error("User not found or deactivated", 401)
     n = (db.query(Notification)
            .filter(Notification.user_id == request.user["user_id"],
                    Notification.is_read.is_(False))
@@ -40,6 +44,8 @@ def read_all():
 @token_required
 def mark_read(notification_id):
     db = get_session()
+    if current_user() is None:
+        return error("User not found or deactivated", 401)
     n = db.get(Notification, notification_id)
     if n is None or n.user_id != request.user["user_id"]:
         return error("Notification not found", 404)

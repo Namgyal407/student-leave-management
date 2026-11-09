@@ -1,7 +1,7 @@
 "use strict";
 
 // Login endpoint from backend/routes/auth.py. No backend changes required.
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = window.location.origin;
 const AUTH_STORAGE_KEY = "slm_auth";
 
 const loginForm = document.getElementById("loginForm");
@@ -179,7 +179,7 @@ loginForm.addEventListener("submit", async (event) => {
     }
 
     saveAuth(data.token, user, rememberMe.checked);
-    showSignedIn(user);
+    window.location.assign("/dashboard");
   } catch (error) {
     showMessage(error.message || "Unable to sign in. Please try again.");
   } finally {
@@ -222,7 +222,7 @@ document.getElementById("signOutButton").addEventListener("click", () => {
       headers: { Authorization: `Bearer ${saved.token}` },
     });
     if (data.user && !loginForm.matches(":focus-within")) {
-      showSignedIn(data.user);
+      window.location.replace("/dashboard");
     }
   } catch (error) {
     // Expired/invalid tokens should never restore a session.

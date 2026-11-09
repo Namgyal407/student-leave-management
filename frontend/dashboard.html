@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#11264c" />
+  <meta name="description" content="Student Leave Management System — student, faculty and administrator portal." />
+  <title>Dashboard | CST Student Leave</title>
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+  <script src="/static/js/dashboard.js" defer></script>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="/dashboard" aria-label="CST Leave Portal home">
+        <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m2 9.5 10-5 10 5-10 5-10-5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 12v5c3.5 3 8.5 3 12 0v-5M22 10v6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <span class="brand-name"><strong>CST Leave</strong><small>Management Portal</small></span>
+      </a>
+      <div class="sidebar-label">WORKSPACE</div>
+      <nav aria-label="Main navigation" id="sideNav" class="side-nav"></nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><span class="help-icon" aria-hidden="true">?</span><strong>Need assistance?</strong><p>Contact your college administration for account and leave policy questions.</p></div>
+        <button class="sidebar-logout" id="logoutButton" type="button"><span aria-hidden="true">↪</span> Sign out</button>
+      </div>
+    </aside>
+    <div class="sidebar-shade" id="sidebarShade" hidden></div>
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button menu-button" id="menuToggle" type="button" aria-label="Open navigation">☰</button>
+          <div class="breadcrumbs">CST / <strong id="breadcrumbText">Overview</strong></div>
+        </div>
+        <div class="topbar-actions">
+          <span class="connection-pill"><span class="connection-dot"></span> Campus portal</span>
+          <button class="icon-button notification-trigger" id="notificationButton" type="button" aria-label="View notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span class="dot-indicator" id="notificationDot" hidden></span></button>
+          <button class="account-chip" id="accountButton" type="button" aria-label="Open account settings"><span class="avatar" id="headerAvatar">U</span><span class="account-meta"><strong id="headerName">Account</strong><small id="headerRole">Member</small></span><span class="account-chevron">⌄</span></button>
+        </div>
+      </header>
+      <main class="main-content" id="mainContent" tabindex="-1">
+        <section class="loading-screen" aria-live="polite"><div class="loading-wheel"></div><h2>Loading your workspace</h2><p>Connecting to your college account…</p></section>
+      </main>
+      <footer class="app-footer"><span>© 2026 College of Science and Technology</span><span>Student Leave Management System · Academic project</span></footer>
+    </div>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="toastRoot" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -70,3 +70,16 @@ a student can't have overlapping pending/approved leaves (409). Leave objects in
 
 ## Health
 `GET /api/health` → `{"status": "ok"}` (checks the DB connection).
+
+## Frontend routes (Flask serves static frontend)
+
+- `GET /` — login page.
+- `GET /dashboard` — role-based SPA; JavaScript checks the saved token using `GET /api/me`.
+- `GET /static/css/*`, `GET /static/js/*` — frontend assets.
+
+## Supporting documents
+
+- `POST /api/attachments` — **student only**; multipart field `file`, maximum 5 MB, allowed PDF/JPG/PNG; returns `{ "document_url": "/api/attachments/<id>_<uuid>.pdf", "name": "..." }`.
+- `GET /api/attachments/<filename>` — authenticated private download; owner student or faculty in owner's department or administrator if file is linked to an application.
+- Attach the returned `document_url` to the leave request. Medical/Academic types require an attachment (or an HTTPS supporting link for legacy data).
+- `GET /api/leave-types?include_inactive=true` — administrator sees inactive as well as active leave types.

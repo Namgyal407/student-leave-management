@@ -5,7 +5,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from sqlalchemy import text
 from werkzeug.exceptions import HTTPException
@@ -18,16 +18,27 @@ from routes import leave_types, leaves, notifications, users  # noqa: E402
 
 
 def create_app():
-    app = Flask(__name__)
+    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+    app = Flask(__name__, static_folder=frontend_dir, static_url_path="/static")
     app.json.sort_keys = False
+    app.config["MAX_CONTENT_LENGTH"] = 6 * 1024 * 1024  # attachment request cap
 
     origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "*").split(",") if o.strip()]
     CORS(app, resources={r"/api/*": {"origins": origins}})
 
     app.teardown_appcontext(close_session)
 
-    for module in (auth_routes, leaves, leave_types, notifications, users):
+    from routes import attachments
+    for module in (auth_routes, leaves, leave_types, notifications, users, attachments):
         app.register_blueprint(module.bp)
+
+    @app.get("/")
+    def login_page():
+        return send_from_directory(frontend_dir, "index.html")
+
+    @app.get("/dashboard")
+    def dashboard_page():
+        return send_from_directory(frontend_dir, "dashboard.html")
 
     @app.get("/api/health")
     def health():

@@ -7,7 +7,7 @@ Admin     : everything
 from datetime import date
 
 from flask import Blueprint, jsonify, request
-from sqlalchemy import func
+from sqlalchemy import func, false
 from sqlalchemy.orm import aliased
 
 from auth.jwt_handler import role_required, token_required
@@ -36,9 +36,10 @@ def _scope(query, user):
     """Restrict a leave query to what `user` is allowed to see."""
     if user.role == "student":
         return query.filter(LeaveApplication.student_id == user.id)
-    if user.role == "faculty" and user.department:
-        return query.filter(Student.department == user.department)
-    return query  # admin (or faculty with no department set)
+    if user.role == "faculty":
+        # A faculty member without a department must never see campus-wide records.
+        return query.filter(Student.department == user.department) if user.department else query.filter(false())
+    return query  # admin
 
 
 def _serialize(row):
@@ -95,6 +96,8 @@ def _validate_leave_fields(db, data, student_id, existing=None):
         return None, error("start_date and end_date are required (YYYY-MM-DD)", 400)
     if end < start:
         return None, error("end_date cannot be before start_date", 400)
+    if start < date.today() and not existing:
+        return None, error("Leave requests cannot start in the past", 400)
     days = (end - start).days + 1
     if ltype.max_days and days > ltype.max_days:
         return None, error(f"{ltype.name} leave allows at most {ltype.max_days} days "
@@ -107,6 +110,13 @@ def _validate_leave_fields(db, data, student_id, existing=None):
     doc = doc.strip() if isinstance(doc, str) and doc.strip() else None
     if len(doc or "") > 255:
         return None, error("document_url is too long (max 255)", 400)
+    if doc and doc.startswith("/api/attachments/"):
+        # Prevent students attaching a file uploaded by another account.
+        filename = doc.rsplit("/", 1)[-1]
+        if not filename.startswith(f"{student_id}_"):
+            return None, error("You may only attach your own uploaded documents", 403)
+    if doc and not (doc.startswith("/api/attachments/") or doc.startswith("https://")):
+        return None, error("Supporting documents must be uploaded files or HTTPS links", 400)
     if ltype.requires_doc and not doc:
         return None, error(f"{ltype.name} leave requires a supporting document "
                            f"(document_url)", 400)
@@ -135,10 +145,12 @@ def create_leave():
     db.add(leave)
     db.flush()  # get leave.id
 
-    # Notify faculty of the student's department (fall back to all faculty).
+    # Notify the proper faculty. If none is assigned, notify administrators,
+    # not unrelated faculty who cannot access the application.
     faculty_q = db.query(User).filter(User.role == "faculty", User.is_active.is_(True))
     faculty = faculty_q.filter(User.department == user.department).all() if user.department else []
-    for f in faculty or faculty_q.all():
+    reviewers = faculty or db.query(User).filter(User.role == "admin", User.is_active.is_(True)).all()
+    for f in reviewers:
         notify(db, f.id, "New leave request",
                f"{user.name} requested leave from {clean['start_date']} to {clean['end_date']}.",
                "info", leave.id)
